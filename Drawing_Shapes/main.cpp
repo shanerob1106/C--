@@ -93,6 +93,7 @@ auto main() -> int
         GFX::drawRect(0, 252, 480, 20, 0x6AA84F);
         person(x, y);
         GFX::swapBuffers();
+        
         sceDisplayWaitVblankStart();
     }
 }
