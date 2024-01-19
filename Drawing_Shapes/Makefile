@@ -1,5 +1,6 @@
 TARGET = Drawing_Shapes
-OBJS = main.o
+OBJS = main.o \
+gfx.o
 
 CFLAGS = 
 CXXFLAGS = $(CFLAGS) -std=c++14 -fno-rtti
