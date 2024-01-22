@@ -3,7 +3,10 @@
 #include <pspdebug.h>
 #include <pspctrl.h>
 
-// C++ Include
+// C++ STL Include
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <cstdlib>
 
 PSP_MODULE_INFO("Cookie Clicker", 0, 1, 1);
@@ -122,6 +125,34 @@ void handleHeader(int &cookies)
     pspDebugScreenPrintf("\nAuto-clickers: %d", autoClickerUpgrade.numBought);
 }
 
+// Save game state to a file
+void saveGame(const int &cookies)
+{
+    std::ofstream saveFile("savegame.txt");
+    if (saveFile.is_open())
+    {
+        saveFile << cookies << "\n";
+        saveFile << clickerUpgrade.numBought << "\n";
+        saveFile << autoClickerUpgrade.numBought << "\n";
+        saveFile << randomMultiplierUpgrade.numBought << "\n";
+        saveFile.close();
+    }
+}
+
+// Load game state from a file
+void loadGame(int &cookies)
+{
+    std::ifstream saveFile("savegame.txt");
+    if (saveFile.is_open())
+    {
+        saveFile >> cookies;
+        saveFile >> clickerUpgrade.numBought;
+        saveFile >> autoClickerUpgrade.numBought;
+        saveFile >> randomMultiplierUpgrade.numBought;
+        saveFile.close();
+    }
+}
+
 auto main() -> int
 {
     // DONT TOUCH THIS
@@ -129,6 +160,7 @@ auto main() -> int
     pspDebugScreenInit();
     sceCtrlGetSamplingCycle(0);
     sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+
     SceCtrlData pad;
 
     // Cookie variables
@@ -136,6 +168,8 @@ auto main() -> int
     bool crossPressedLastFrame = false;
     bool menuPressedLastFrame = false;
     bool menuOpen = false;
+
+    loadGame(cookies);
 
     // Main loop
     while (true)
@@ -194,6 +228,8 @@ auto main() -> int
             pspDebugScreenPrintf("\nPress SQUARE to buy clicker upgrade!");
             pspDebugScreenPrintf("\nPress TRIANGLE to buy auto-clicker upgrade!");
             pspDebugScreenPrintf("\nPress CIRCLE to buy random multiplier upgrade!\n");
+            pspDebugScreenPrintf("\nSave game by pressing L!");
+            pspDebugScreenPrintf("\nOpen game by pressing R!");
 
             pspDebugScreenPrintf("\nUpgrade clicker cost: %.0f", clickerUpgrade.getCurrentCost());
             pspDebugScreenPrintf("\nUpgrade auto-clicker cost: %.0f", autoClickerUpgrade.getCurrentCost());
@@ -215,6 +251,17 @@ auto main() -> int
             {
                 // Buy random multiplier logic
                 upgradeRandomMultiplier(cookies);
+            }
+
+            if (pad.Buttons & PSP_CTRL_LTRIGGER)
+            {
+                saveGame(cookies);
+            }
+
+            // Load game logic
+            if (pad.Buttons & PSP_CTRL_RTRIGGER)
+            {
+                loadGame(cookies);
             }
         }
     }

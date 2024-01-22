@@ -2,8 +2,10 @@ TARGET = Cookie_Clicker
 OBJS = main.o
 
 CFLAGS = 
-CXXFLAGS = $(CFLAGS) -std=c++14
+CXXFLAGS = $(CFLAGS) -std=c++11 -fno-rtti
 ASFLAGS = $(CFLAGS)
+
+LIBS += -lstdc++
 
 # PSP stuff
 BUILD_PRX = 1

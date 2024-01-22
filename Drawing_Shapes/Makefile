@@ -1,9 +1,10 @@
 TARGET = Drawing_Shapes
 OBJS = main.o \
-gfx.o
+gfx.o \
+player.o
 
 CFLAGS = 
-CXXFLAGS = $(CFLAGS) -std=c++14 -fno-rtti
+CXXFLAGS = $(CFLAGS) -std=c++11 -fno-rtti
 ASFLAGS = $(CFLAGS)
 
 # PSP stuff
@@ -16,4 +17,5 @@ PSP_EBOOT_TITLE = Drawing Shapes
 # PSP_EBOOT_ICON = ICON0.PNG
 
 PSPSDK=$(shell psp-config --pspsdk-path)
+
 include $(PSPSDK)/lib/build.mak
