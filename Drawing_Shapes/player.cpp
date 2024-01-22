@@ -22,7 +22,7 @@ enum CollisionType
 class Player
 {
 public:
-    Player(int x, int y) : x(x), y(y), canJump(false), gravity(1), velocityX(0), velocityY(0), maxSpeed(2), friction(0.9), width(20), height(20) {}
+    Player(int x, int y) : x(x), y(y), canJump(false), gravity(0.5), velocityX(0), velocityY(0), maxSpeed(2), friction(0.9), width(20), height(20) {}
 
     // Player Size
     int width;
@@ -65,7 +65,7 @@ public:
         // Only allow jumping if the player is colliding with the floor or platform
         if ((pad.Buttons & PSP_CTRL_CROSS) && ((isCollidingWith(floor) || onPlatform)) && canJump)
         {
-            velocityY = -10;
+            velocityY = -6;
             canJump = false;
         }
 
@@ -125,31 +125,32 @@ public:
 
     CollisionType isCollidingWith(const Object &other) const
     {
-        bool xOverlap = x < other.getX() + other.getWidth() && x + width > other.getX();
-        bool yOverlap = y < other.getY() + other.getHeight() && y + height > other.getY();
+        float xCenter = x + 0.5f * width;
+        float yCenter = y + 0.5f * height;
 
-        if (xOverlap && yOverlap)
+        float otherXCenter = other.getX() + 0.5f * other.getWidth();
+        float otherYCenter = other.getY() + 0.5f * other.getHeight();
+
+        float xDist = std::abs(xCenter - otherXCenter);
+        float yDist = std::abs(yCenter - otherYCenter);
+
+        float combinedHalfWidths = 0.5f * (width + other.getWidth());
+        float combinedHalfHeights = 0.5f * (height + other.getHeight());
+
+        if (xDist < combinedHalfWidths && yDist < combinedHalfHeights)
         {
-            float xOverlapAmount = std::min(x + width - other.getX(), other.getX() + other.getWidth() - x);
-            float yOverlapAmount = std::min(y + height - other.getY(), other.getY() + other.getHeight() - y);
+            float overlapX = combinedHalfWidths - xDist;
+            float overlapY = combinedHalfHeights - yDist;
 
-            if (yOverlapAmount < xOverlapAmount)
+            if (overlapX < overlapY)
             {
-                if (velocityY > 0)
-                {
-                    return TOP;
-                }
+                // Collision on the left or right side
+                return xCenter < otherXCenter ? LEFT : RIGHT;
             }
             else
             {
-                if (velocityX > 0)
-                {
-                    return LEFT;
-                }
-                else if (velocityX < 0)
-                {
-                    return RIGHT;
-                }
+                // Collision on the top or bottom side
+                return yCenter < otherYCenter ? TOP : BOTTOM;
             }
         }
 
@@ -204,5 +205,5 @@ private:
     int x;
     int y;
     bool canJump;
-    int gravity;
+    float gravity;
 };
