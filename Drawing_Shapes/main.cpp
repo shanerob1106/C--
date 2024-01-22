@@ -44,12 +44,17 @@ auto main() -> int
     sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
     SceCtrlData pad;
 
-    Player player(0, 0); // Create a player object
+    // Create a player object
+    Player player(0, 0);
+
+    // Create the environment
     Object floor(0, 230, 20, 480);
     Object roof(0, 0, 22, 480);
 
+    // Add platforms
     std::vector<Object> platforms;
     platforms.push_back(Object(100, 200, 20, 20));
+    platforms.push_back(Object(150, 175, 20, 20));
     platforms.push_back(Object(200, 150, 20, 20));
 
     GFX::init();
@@ -74,6 +79,7 @@ auto main() -> int
         // Environment (make calls between clear and swapBuffers)
         floor.drawRect(floor.getX(), floor.getY() + floor.getHeight(), 0x6AA84F);
 
+        // drawing platforms
         for (const auto &platform : platforms)
         {
             platform.drawRect(platform.getX(), platform.getY() + platform.getHeight(), 0xCC0000);

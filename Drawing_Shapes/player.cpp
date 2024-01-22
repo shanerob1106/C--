@@ -79,7 +79,6 @@ public:
         y += velocityY;
 
         // Collision detection (platform)
-
         for (const auto &platform : platforms)
         {
             CollisionType platformCollision = isCollidingWith(platform);
@@ -205,7 +204,5 @@ private:
     int x;
     int y;
     bool canJump;
-    int jumpHeight;
-    int jumpSpeed;
     int gravity;
 };
