@@ -48,7 +48,9 @@ auto main() -> int
     Object floor(0, 230, 20, 480);
     Object roof(0, 0, 22, 480);
 
-    Object platform(100, 210, 20, 20);
+    std::vector<Object> platforms;
+    platforms.push_back(Object(100, 200, 20, 20));
+    platforms.push_back(Object(200, 150, 20, 20));
 
     GFX::init();
 
@@ -66,14 +68,16 @@ auto main() -> int
         pspDebugScreenSetXY(0, 2);
         pspDebugScreenPrintf("canJump: %d", player.getCanJump());
 
-        player.update(pad, floor, roof, platform);
+        player.update(pad, floor, roof, platforms);
         player.draw(player.getX(), player.getY() + player.height);
 
         // Environment (make calls between clear and swapBuffers)
         floor.drawRect(floor.getX(), floor.getY() + floor.getHeight(), 0x6AA84F);
-        platform.drawRect(platform.getX(), platform.getY() + platform.getHeight(), 0xCC0000);
 
-        // Player
+        for (const auto &platform : platforms)
+        {
+            platform.drawRect(platform.getX(), platform.getY() + platform.getHeight(), 0xCC0000);
+        }
 
         // Swap buffers
         GFX::swapBuffers();

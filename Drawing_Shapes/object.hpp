@@ -11,7 +11,7 @@ public:
     int x, y, width, height;
 
     // Draw a rectangle
-    void drawRect(int x, int y, int color)
+    void drawRect(int x, int y, int color) const
     {
         // Adjust the position by the offset
         GFX::drawRect(x, y, width, height, color);

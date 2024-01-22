@@ -1,14 +1,21 @@
+// PSP headers
 #include <pspctrl.h>
 #include <pspdebug.h>
+
+// #include custom headers
 #include "gfx.hpp"
 #include "object.hpp"
+
+// STL includes
 #include <algorithm>
+#include <vector>
 
 enum CollisionType
 {
     LEFT,
     RIGHT,
     TOP,
+    BOTTOM,
     NONE
 };
 
@@ -27,7 +34,7 @@ public:
     float maxSpeed;
     float friction;
 
-    void update(const SceCtrlData &pad, const Object &floor, const Object &roof, const Object &platform)
+    void update(const SceCtrlData &pad, const Object &floor, const Object &roof, const std::vector<Object> &platforms)
     {
         // Player controller
         if (pad.Buttons & PSP_CTRL_LEFT)
@@ -45,8 +52,18 @@ public:
 
         velocityY += gravity;
 
+        bool onPlatform = false;
+        for (const auto &platform : platforms)
+        {
+            if (isCollidingWith(platform))
+            {
+                onPlatform = true;
+                break;
+            }
+        }
+
         // Only allow jumping if the player is colliding with the floor or platform
-        if ((pad.Buttons & PSP_CTRL_CROSS) && ((isCollidingWith(floor) || isCollidingWith(platform))) && canJump)
+        if ((pad.Buttons & PSP_CTRL_CROSS) && ((isCollidingWith(floor) || onPlatform)) && canJump)
         {
             velocityY = -10;
             canJump = false;
@@ -62,27 +79,37 @@ public:
         y += velocityY;
 
         // Collision detection (platform)
-        CollisionType platformCollision = isCollidingWith(platform);
-        if (platformCollision != NONE)
+
+        for (const auto &platform : platforms)
         {
-            if (platformCollision == TOP)
+            CollisionType platformCollision = isCollidingWith(platform);
+            if (platformCollision != NONE)
             {
-                pspDebugScreenPrintf("PLAT TOP");
-                y = platform.getY() - platform.getHeight();
-                velocityY = 0.0f;
-                canJump = true;
-            }
-            else if (platformCollision == RIGHT)
-            {
-                pspDebugScreenPrintf("PLAT RIGHT");
-                x = platform.getX() + platform.getWidth();
-                velocityX = 0.0f;
-            }
-            else if (platformCollision == LEFT)
-            {
-                pspDebugScreenPrintf("PLAT LEFT");
-                x = platform.getX() - platform.getWidth();
-                velocityX = 0.0f;
+                if (platformCollision == TOP)
+                {
+                    pspDebugScreenPrintf("PLAT TOP");
+                    y = platform.getY() - platform.getHeight();
+                    velocityY = 0.0f;
+                    canJump = true;
+                }
+                else if (platformCollision == RIGHT)
+                {
+                    pspDebugScreenPrintf("PLAT RIGHT");
+                    x = platform.getX() + platform.getWidth();
+                    velocityX = 0.0f;
+                }
+                else if (platformCollision == LEFT)
+                {
+                    pspDebugScreenPrintf("PLAT LEFT");
+                    x = platform.getX() - platform.getWidth();
+                    velocityX = 0.0f;
+                }
+                else if (platformCollision == BOTTOM)
+                {
+                    pspDebugScreenPrintf("PLAT BOTTOM");
+                    y = platform.getY() + platform.getHeight();
+                    velocityY = 0.0f;
+                }
             }
         }
 
