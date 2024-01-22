@@ -66,13 +66,14 @@ auto main() -> int
         pspDebugScreenSetXY(0, 2);
         pspDebugScreenPrintf("canJump: %d", player.getCanJump());
 
+        player.update(pad, floor, roof, platform);
+        player.draw(player.getX(), player.getY() + player.height);
+
         // Environment (make calls between clear and swapBuffers)
         floor.drawRect(floor.getX(), floor.getY() + floor.getHeight(), 0x6AA84F);
         platform.drawRect(platform.getX(), platform.getY() + platform.getHeight(), 0xCC0000);
 
         // Player
-        player.update(pad, floor, roof, platform);
-        player.draw(player.getX(), player.getY() + player.height);
 
         // Swap buffers
         GFX::swapBuffers();
