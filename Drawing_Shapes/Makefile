@@ -3,7 +3,7 @@ OBJS = main.o \
 gfx.o \
 player.o
 
-CFLAGS = 
+CFLAGS =
 CXXFLAGS = $(CFLAGS) -std=c++11 -fno-rtti 
 ASFLAGS = $(CFLAGS)
 
@@ -16,7 +16,7 @@ PSP_LARGE_MEMORY = 1
 
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = Drawing Shapes
-# PSP_EBOOT_ICON = ICON0.PNG
+PSP_EBOOT_ICON = ICON0.PNG
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 
